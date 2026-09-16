@@ -221,17 +221,28 @@
 
           <!-- Interactive Terminal Prompt Input Row -->
           <div class="terminal-input-bar">
-            <span class="term-input-prompt">abhishek@cloud-orchestrator:~$</span>
-            <input
-              type="text"
-              id="terminal-cli-input"
-              class="terminal-cli-input"
-              placeholder="Type a command or ask a question (e.g. 'help', 'skills', 'define kubernetes')..."
-              autocomplete="off"
-              spellcheck="false"
-              aria-label="DevOps Terminal Command Input"
-              onkeydown="if(event.key==='Enter'){event.preventDefault();if(window.executeDevOpsCommand)window.executeDevOpsCommand();}"
-            />
+            <div class="terminal-prompt-row">
+              <span class="term-input-prompt">
+                <span class="prompt-user">abhishek@cloud-orchestrator</span><span class="prompt-tail">:~$</span>
+              </span>
+              <div class="terminal-input-wrapper">
+                <span class="mobile-prompt-prefix" aria-hidden="true">:~$</span>
+                <input
+                  type="text"
+                  id="terminal-cli-input"
+                  class="terminal-cli-input"
+                  placeholder="Type a command (e.g. 'docker ps', 'help')..."
+                  autocomplete="off"
+                  autocorrect="off"
+                  autocapitalize="none"
+                  spellcheck="false"
+                  inputmode="text"
+                  enterkeyhint="go"
+                  aria-label="DevOps Terminal Command Input"
+                  onkeydown="if(event.key==='Enter'||event.keyCode===13){event.preventDefault();if(window.executeDevOpsCommand)window.executeDevOpsCommand();}"
+                />
+              </div>
+            </div>
             <button type="button" id="terminal-cli-run-btn" class="terminal-run-btn" title="Execute command" onclick="if(window.executeDevOpsCommand)window.executeDevOpsCommand();">
               <span>Execute</span>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -1294,6 +1305,13 @@
           this.showInitialBanner();
           if (this.inputField) {
             this.inputField.addEventListener('keydown', (e) => this.handleKeyDown(e));
+            this.inputField.addEventListener('focus', () => {
+              setTimeout(() => {
+                try {
+                  this.inputField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } catch (err) {}
+              }, 300);
+            });
           }
           if (this.runBtn) {
             this.runBtn.addEventListener('click', (e) => {
@@ -1309,9 +1327,10 @@
               this.clearTerminal();
             });
           }
-          if (this.container && this.inputField) {
-            this.container.addEventListener('click', (e) => {
-              if (!e.target.closest('button')) {
+          const wrapper = this.container ? this.container.querySelector('.terminal-input-wrapper') : null;
+          if (wrapper && this.inputField) {
+            wrapper.addEventListener('click', (e) => {
+              if (e.target !== this.inputField) {
                 this.inputField.focus();
               }
             });
@@ -1331,10 +1350,11 @@
         }
 
         handleKeyDown(e) {
-          if (e.key === 'Enter') {
+          if (e.key === 'Enter' || e.keyCode === 13 || e.which === 13) {
             e.preventDefault();
             this.submitCommand();
-          } else if (e.key === 'ArrowUp') {
+            return;
+          } else if (e.key === 'ArrowUp' || e.keyCode === 38) {
             e.preventDefault();
             if (this.history.length > 0) {
               if (this.historyIndex === -1) this.historyIndex = this.history.length - 1;
@@ -1345,7 +1365,7 @@
                 this.inputField.setSelectionRange(len, len);
               }
             }
-          } else if (e.key === 'ArrowDown') {
+          } else if (e.key === 'ArrowDown' || e.keyCode === 40) {
             e.preventDefault();
             if (this.historyIndex !== -1) {
               if (this.historyIndex < this.history.length - 1) {
@@ -1375,6 +1395,13 @@
             return;
           }
 
+          // Debounce rapid duplicate triggers
+          const now = Date.now();
+          if (this._lastSubmitTime && now - this._lastSubmitTime < 250) {
+            return;
+          }
+          this._lastSubmitTime = now;
+
           if (this.isProcessing) return;
           this.isProcessing = true;
 
@@ -1400,7 +1427,7 @@
           }
           setTimeout(() => {
             this.submitCommand();
-          }, 30);
+          }, 60);
         }
 
         renderEmptyNotice() {

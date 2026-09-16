@@ -829,6 +829,16 @@ body {
   padding: 0.75rem 1rem;
   background: rgba(9, 14, 32, 0.95);
   border-top: 1px solid rgba(0, 240, 255, 0.15);
+  position: relative;
+  z-index: 10;
+}
+
+.terminal-prompt-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .term-input-prompt {
@@ -837,32 +847,77 @@ body {
   font-size: 0.85rem;
   white-space: nowrap;
   user-select: none;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+}
+
+.terminal-input-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 0.35rem;
+  background: transparent;
+  border-radius: 4px;
+}
+
+.mobile-prompt-prefix {
+  display: none;
 }
 
 .terminal-cli-input {
   flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #f8fafc;
-  font-family: var(--font-mono);
-  font-size: 0.88rem;
-  caret-color: var(--neon-cyan);
+  width: 100%;
   min-width: 0;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: #f8fafc !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  height: auto;
+  min-height: 38px;
+  padding: 0.35rem 0.5rem;
+  caret-color: var(--neon-cyan) !important;
+  box-sizing: border-box;
+  text-indent: 0 !important;
+  letter-spacing: normal !important;
+  z-index: 2;
+  position: relative;
+  pointer-events: auto !important;
 }
 
 .terminal-cli-input::placeholder {
-  color: #475569;
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
   font-size: 0.82rem;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
 }
 
 .terminal-cli-input:focus {
-  color: #ffffff;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  outline: none !important;
+}
+
+.terminal-cli-input:focus::placeholder {
+  opacity: 0.3;
 }
 
 .terminal-run-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   background: rgba(0, 240, 255, 0.12);
   border: 1px solid rgba(0, 240, 255, 0.35);
@@ -870,11 +925,14 @@ body {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.35rem 0.75rem;
+  padding: 0.45rem 0.85rem;
   border-radius: 4px;
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
+  flex-shrink: 0;
+  user-select: none;
+  touch-action: manipulation;
 }
 
 .terminal-run-btn:hover {
@@ -882,6 +940,11 @@ body {
   color: #020617;
   box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
   transform: translateY(-1px);
+}
+
+.terminal-run-btn:active {
+  transform: translateY(0);
+  background: rgba(0, 240, 255, 0.9);
 }
 
 .terminal-run-btn:active {
@@ -938,23 +1001,6 @@ body {
   transform: translateY(0);
 }
 
-@media (max-width: 768px) {
-  .terminal-input-bar {
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    padding: 0.6rem 0.8rem;
-  }
-  .term-input-prompt {
-    font-size: 0.75rem;
-  }
-  .terminal-cli-input {
-    font-size: 0.8rem;
-    width: 100%;
-  }
-  .terminal-run-btn {
-    margin-left: auto;
-  }
-}
 
 /* Section Common Styles */
 .section {
@@ -1667,32 +1713,111 @@ body {
   /* Interactive Terminal on Mobile */
   .terminal-window {
     border-radius: var(--radius-md);
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .terminal-body {
     padding: 0.85rem;
-    min-height: 230px;
-    max-height: 310px;
+    min-height: 200px;
+    max-height: 280px;
     font-size: 0.8rem;
     -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    word-break: break-word;
   }
 
   .terminal-input-bar {
-    padding: 0.6rem 0.8rem;
-    gap: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0.75rem 0.85rem;
+    background: rgba(9, 14, 32, 0.98);
+    border-top: 1px solid rgba(0, 240, 255, 0.2);
+  }
+
+  .terminal-prompt-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    width: 100%;
   }
 
   .term-input-prompt {
     font-size: 0.78rem;
+    color: var(--neon-cyan);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  .prompt-tail {
+    display: none; /* In mobile layout, :~$ is rendered inside the input wrapper */
+  }
+
+  .terminal-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+    min-width: 0;
+    background: rgba(0, 240, 255, 0.04);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    border-radius: 6px;
+    padding: 0.2rem 0.6rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .terminal-input-wrapper:focus-within {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+    background: rgba(0, 240, 255, 0.07);
+  }
+
+  .mobile-prompt-prefix {
+    display: inline-block;
+    color: var(--neon-cyan);
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    user-select: none;
+    flex-shrink: 0;
   }
 
   .terminal-cli-input {
-    font-size: 16px !important; /* Prevents mobile browser auto-zoom */
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    font-size: 16px !important; /* Critical: Prevents mobile browser auto-zoom on iOS */
+    min-height: 40px;
+    line-height: 1.4;
+    padding: 0.35rem 0.3rem;
+    color: #f8fafc !important;
+    -webkit-text-fill-color: #f8fafc !important;
+    background: transparent !important;
+    caret-color: var(--neon-cyan) !important;
+    opacity: 1 !important;
+    border: none !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
   }
 
   .terminal-run-btn {
-    padding: 0.4rem 0.7rem;
-    font-size: 0.72rem;
+    align-self: flex-end;
+    padding: 0.45rem 1rem;
+    font-size: 0.8rem;
+    min-height: 38px;
+    min-width: 85px;
+    justify-content: center;
+    background: rgba(0, 240, 255, 0.18);
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-cyan);
   }
 
   .term-code-block {

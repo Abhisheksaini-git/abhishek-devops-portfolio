@@ -347,13 +347,22 @@ export class DevOpsTerminal {
     // 2. Input key listener (Enter and Arrow Up/Down history)
     if (this.inputField) {
       this.inputField.addEventListener('keydown', (e) => this.handleKeyDown(e));
-
-      // Container click focuses input (unless clicking a button)
-      this.container.addEventListener('click', (e) => {
-        if (!e.target.closest('button') && this.inputField) {
-          this.inputField.focus();
-        }
+      this.inputField.addEventListener('focus', () => {
+        setTimeout(() => {
+          try {
+            this.inputField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } catch (err) {}
+        }, 300);
       });
+
+      const wrapper = this.container ? this.container.querySelector('.terminal-input-wrapper') : null;
+      if (wrapper) {
+        wrapper.addEventListener('click', (e) => {
+          if (e.target !== this.inputField) {
+            this.inputField.focus();
+          }
+        });
+      }
     }
 
     // 3. Execute Run Button event listener
@@ -401,10 +410,11 @@ export class DevOpsTerminal {
   }
 
   handleKeyDown(e) {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' || e.keyCode === 13 || e.which === 13) {
       e.preventDefault();
       this.submitCommand();
-    } else if (e.key === 'ArrowUp') {
+      return;
+    } else if (e.key === 'ArrowUp' || e.keyCode === 38) {
       e.preventDefault();
       if (this.history.length > 0) {
         if (this.historyIndex === -1) {
@@ -453,6 +463,12 @@ export class DevOpsTerminal {
     }
 
     // Debounce / double-execution prevention
+    const now = Date.now();
+    if (this._lastSubmitTime && now - this._lastSubmitTime < 250) {
+      return;
+    }
+    this._lastSubmitTime = now;
+
     if (this.isProcessing) return;
     this.isProcessing = true;
 
@@ -763,6 +779,13 @@ export class DevOpsTerminal {
 }
 
 export function initInteractiveTerminal() {
+  if (window.__devopsTerminalInstance) {
+    return window.__devopsTerminalInstance;
+  }
   const terminal = new DevOpsTerminal('devops-interactive-terminal');
+  window.__devopsTerminalInstance = terminal;
+  window.executeDevOpsCommand = () => terminal.submitCommand();
+  window.executeSuggestedDevOpsCommand = (q) => terminal.executeSuggestedQuery(q);
+  window.clearDevOpsTerminal = () => terminal.clearTerminal();
   return terminal;
 }
