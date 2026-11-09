@@ -79,6 +79,14 @@ const server = http.createServer((req, res) => {
   // 3. Static File Serving
   let filePath = path.join(STATIC_DIR, pathname === '/' ? 'index.html' : pathname);
 
+  // If running in development root and file not found, check public directory
+  if (STATIC_DIR === __dirname && !fs.existsSync(filePath)) {
+    const publicCandidate = path.join(__dirname, 'public', pathname);
+    if (fs.existsSync(publicCandidate)) {
+      filePath = publicCandidate;
+    }
+  }
+
   // Security: Prevent directory traversal
   if (!filePath.startsWith(STATIC_DIR)) {
     res.writeHead(403);

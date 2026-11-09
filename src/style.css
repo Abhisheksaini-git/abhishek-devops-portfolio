@@ -586,21 +586,64 @@ body {
   animation: pulse-dot 1.5s infinite;
 }
 
+/* Hero Profile Header (Avatar + Name & Designation) */
+.hero-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero-avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-avatar-img {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 2px solid var(--neon-cyan);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.4), 0 0 30px rgba(0, 240, 255, 0.2);
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.hero-avatar-img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 22px rgba(0, 240, 255, 0.65), 0 0 45px rgba(0, 240, 255, 0.35);
+}
+
+.hero-title-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
 .hero-title {
   font-family: var(--font-title);
-  font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+  font-size: clamp(2.4rem, 4.5vw, 4rem);
   font-weight: 800;
   line-height: 1.08;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
 }
 
 .hero-designation {
   font-family: var(--font-mono);
-  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
   color: var(--neon-cyan);
   font-weight: 600;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -1646,15 +1689,44 @@ body {
     min-height: auto;
   }
 
+  .hero-profile-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-avatar-wrapper {
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+    min-height: 110px;
+  }
+
+  .hero-avatar-img {
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+    min-height: 110px;
+  }
+
+  .hero-title-group {
+    flex: 1;
+    min-width: 0;
+  }
+
   .hero-title {
-    font-size: clamp(2.1rem, 7.5vw, 3rem);
-    line-height: 1.15;
+    font-size: clamp(1.75rem, 6vw, 2.3rem);
+    line-height: 1.12;
+    margin-bottom: 0.35rem;
   }
 
   .hero-designation {
-    font-size: 1rem;
+    font-size: 0.9rem;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.35rem;
+    margin-bottom: 0;
   }
 
   .hero-tagline {
@@ -1945,6 +2017,36 @@ body {
 }
 
 @media (max-width: 480px) {
+  .hero-profile-header {
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .hero-avatar-wrapper {
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+    min-height: 110px;
+  }
+
+  .hero-avatar-img {
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+    min-height: 110px;
+  }
+
+  .hero-title {
+    font-size: clamp(1.4rem, 5.2vw, 1.85rem);
+    line-height: 1.15;
+    margin-bottom: 0.25rem;
+  }
+
+  .hero-designation {
+    font-size: 0.78rem;
+    gap: 0.25rem;
+  }
+
   .hero-cta a {
     flex: 1 1 100%;
   }
